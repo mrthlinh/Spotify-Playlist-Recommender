@@ -229,7 +229,7 @@ Collaborative Filtering can be formulated by approximating a matrix __X__ by usi
 __Deep Learning__
 Once we have latent feature vectors of playlist and songs, we can feed them to a Deep Learning model or any Machine Learning model to predict results.
 
-![](pic/description/DL-model-based.PNG)
+![](pic/description/DL-model-based.png)
 
 
 ### Blending / Combine / Hybrid Model
