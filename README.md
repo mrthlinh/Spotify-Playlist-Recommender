@@ -141,9 +141,11 @@ __Normalized discounted cumulative gain (NDCG)__
 Discounted cumulative gain (DCG) measures the ranking quality of the recommended tracks, increasing when relevant tracks are placed higher in the list. Normalized DCG (NDCG) is determined by calculating the DCG and dividing it by the ideal DCG in which the recommended tracks are perfectly ranked:
 
 ![](pic/description/NDCG1.PNG)
+
 The ideal DCG or IDCG is, on our case, equal to:
 
 ![](pic/description/NDCG2.PNG)
+
 If the size of the set intersection of G and R, is empty, then the DCG is equal to 0. The NDCG metric is now calculated as:
 
 ![](pic/description/NDCG3.PNG)
@@ -162,9 +164,108 @@ Final rankings will be computed by using the [Borda Count](https://en.wikipedia.
 
 ## Proposed Solutions
 
-There are two basic types of recommenders. One uses something called __content-based filtering__. The other uses something called __collaborative filtering__. Generally speaking, content-based systems are simpler but come up with less interesting recommendations. Collaborative systems can get very complicated and unwieldy and require a lot of user-generated data, but they’re the state of the art.
+### Background of Recommender:
+A recommender system would suggest relevant products such as books, movies, songs or friends for customer. There are two basic types of recommenders. One is called __content-based filtering__ and the other is __collaborative filtering__. Generally speaking, content-based systems are simpler but come up with less interesting recommendations. Collaborative systems can get very complicated and unwieldy and require a lot of user-generated data, but they’re the state of the art.
+
+__Content-based filtering__: Some experts or customers will manually investigate products and put them label them to various category / attributes. Once we have all features, we can calculate similarity between each item to other and retrieve relevant items.
+
+__Collaborative filtering (CF)__: In contrast of content-based filtering, collaborative filtering does not require manual labels. The system would look at users who have similar taste / behavior to make product suggestion. In collaborative filtering, we also have two types, one is memory-based and other is model-based. While memory-based CF needs to construct a large matrix of user-item to calculate similarity, model-based CF requires machine learning algorithms such as clustering, matrix factorization and deep learning.
+
+![](pic/description/summary_recsys.PNG)
+
+In __Memory-based filtering__, we also have two types, one is User-Item CF and other is Item-Item CF.
+- User-Item CF: take a particular person, find people who are similar to that person based on similar ratings, and recommend items those similar people liked. “Customers who are similar to you also liked …”
+- Item-Item CF: Item-item filtering will take a particular item, find people who liked that item, and find other items that those people (or people similar to them) also liked (in common?). It takes items and outputs other items as recommendations. “Customers who liked this item also liked …”
+In short User-Item CF is “Customers who are similar to you also liked …” and Item-Item CF is “Customers who liked this item also liked …”
+![](pic/description/memory-based.jpg)
+
+Memory-based algorithms are easy to implement and produce reasonable prediction quality. The drawback of memory-based CF is that it doesn't scale to real-world scenarios and doesn't address the well-known cold-start problem, that is when new user or new item enters the system. Model-based CF methods are scalable and can deal with higher sparsity level than memory-based models, but also suffer when new users or items that don't have any ratings enter the system.
+
+In __Model-based filtering__, In model-based CF, we all start with Matric factorization. Matrix factorization is widely used for recommender systems where it can deal better with scalability and sparsity than Memory-based CF.
+
+The goal of Matrix factorization is to learn the latent preferences of users and the latent attributes of items from known ratings (learn features that describe the characteristics of ratings) to then predict the unknown ratings through the dot product of the latent features of users and items. When you have a very sparse matrix, with a lot of dimensions, by doing matrix factorization you can restructure the user-item matrix into low-rank structure, and you can represent the matrix by the multiplication of two low-rank matrices, where the rows contain the latent vector. You fit this matrix to approximate your original matrix, as closely as possible, by multiplying the low-rank matrices together, which fills in the entries missing in the original matrix.
+
+![](pic/description/model-based.png)
+
+### Playlist Recommender:
+
+For our problem, we treat "user" as "playlist" and "item" as "song". Because the dataset don't provide much information about each song so we won't use content-based filtering. Therefore we would only focus on Collaborative Filtering.
+
+### Memory Based
+In __memory-based__, we following the procedure
+1. Construct playlist-song matrix
+
+![](pic/description/user-item table.png)
+
+"1" means that song is included in the playlist and "0" otherwise. For example, playlist 1 contains song 2 and song 3, song 2 also includes in playlist 2.
+
+2. First we split the data into training and testing set such that the testing set would contains 10 training set contains .....
+
+3. Calculate the similarity between song-song or playlist-playlist
+![](pic/description/cosine-sim.PNG)
+
+In playlist-playlist similarity, we take each row as a vector while in song-song similarity we take column as a vector
+![](pic/description/similarity-matrix.PNG)
+4. Based on the similarity matrix and, we make the prediction on the testing set.
+
+For playlist-playlist, we predict that a playlist __p__ contains song __s__ is given by the weighted sum of all other playlists' containing for song __s__ where the weighting is the cosine similarity between the each playlist and the input playlist __p__. Then normalizing the result.
+
+<img src="https://latex.codecogs.com/gif.latex?\hat{r}_{ps}&space;=&space;\frac{\sum\limits_{p'}&space;sim(p,&space;p')&space;r_{p's}}{\sum\limits_{p'}|sim(p,&space;p')|}" title="\hat{r}_{ps} = \frac{\sum\limits_{p'} sim(p, p') r_{p's}}{\sum\limits_{p'}|sim(p, p')|}" />
+
+With song-song, we simply replace similarity matrix of playlists by that of songs.
+
+5. Evaluate based on 4 metrics
+
+![](pic/description/memory-based-proc.png)
+
+### Model Based
+Matrix factorization can be done with orthogonal factorization (SVD), probabilistic factorization (PMF) or Non-Negative factorization (NMF).
+
+__Singular Value Decomposition (SVD)__
+Collaborative Filtering can be formulated by approximating a matrix __X__ by using singular value decomposition. The winning team at the Netflix Prize competition used SVD matrix factorization models to produce product recommendations, for more information I recommend to read articles: Netflix Recommendations: Beyond the 5 stars and Netflix Prize and SVD. The general equation can be expressed as follows: __X = U × S × V_transpose__
+
+![](pic/description/SVD.png)
+
+__Deep Learning__
+Once we have latent feature vectors of playlist and songs, we can feed them to a Deep Learning model or any Machine Learning model to predict results.
+
+![](pic/description/DL-model-based.PNG)
+
+
+### Blending / Combine / Hybrid Model
+- Combine Memory-Based and Model-based
+
+### Challenge:
+
+1. Single PC maybe cannot handle this dataset.
+
+
+## Timeline:
+
+- Week 0 (8/7): Project Proposal
+- Week 1 (8/14):
+  - Work on some tutorials of CF from Movie Data.
+  - Take a small subset of data and do the same. Start with Memory-based model (Item-item, and user-item)
+  - Complete Section 16: __Data Science at Scale__, focus on __Spark and PySpark__
+  - Apply what you've learned to do some basic EDA of data.
+- Week 2 (8/21):
+  - Implement memory-based with PySpark
+  - Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
+- Week 3 (8/28):
+  - Implement model-based with Deep Learning
+  - Compare model with various Metrics
+- Week 4:
+  - Tune model and finalize the results.
+  - Finish the report.
 
 ## Reference:
 
 1. [Many Types of Recommender Systems](https://blogs.gartner.com/martin-kihn/how-to-build-a-recommender-system-in-python/)
 2. [Playlist Recommender](https://medium.com/s/story/spotifys-discover-weekly-how-machine-learning-finds-your-new-music-19a41ab76efe)
+3. [Millions song dataset](https://www.kaggle.com/c/msdchallenge)
+4. [Amazon Recommendations Item-to-Item Collaborative Filtering](http://www.cs.umd.edu/~samir/498/Amazon-Recommendations.pdf)
+5. [Collaborative Filterring at Spottify](https://www.slideshare.net/erikbern/collaborative-filtering-at-spotify-16182818/62)
+6. [Implementing CF in Python](https://cambridgespark.com/content/tutorials/implementing-your-own-recommender-systems-in-Python/index.html)
+7. [Implementing CF in Python with Last.fm dataset](http://www.salemmarafi.com/code/collaborative-filtering-with-python/)
+8. [Theory and implementation of CF -must read](https://towardsdatascience.com/various-implementations-of-collaborative-filtering-100385c6dfe0)
+9. [must read](http://blog.ethanrosenthal.com/2015/11/02/intro-to-collaborative-filtering/)
