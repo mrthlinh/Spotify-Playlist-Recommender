@@ -240,23 +240,46 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 1. Single PC maybe cannot handle this dataset.
 
 
+### EDA:
+- Number of:
+  - playlists
+  - Tracks
+  - unique tracks, albums, artists, titles, normalized titles
+- Distribution and Average of:
+  - #song per playlist
+  - #
+
+- Average songs per playlist? Distribution of #songs?
+- Average duration songs?
+- Top Songs
+
+### Preliminary Result
+1. Description for small dataset.
+2. Result of item-item / user-item based
+3. Conclusion
+
 ## Timeline:
 
-- Week 0 (8/7): Project Proposal
+- Week 0 (8/7):
+  - [x] Project Proposal
 - Week 1 (8/14):
-  - Work on some tutorials of CF from Movie Data.
-  - Take a small subset of data and do the same. Start with Memory-based model (Item-item, and user-item)
-  - Complete Section 16: __Data Science at Scale__, focus on __Spark and PySpark__
-  - Apply what you've learned to do some basic EDA of data.
+  - [x] Work on some tutorials of CF from Movie Data.
+  - [x] Complete Section 16: __Data Science at Scale__, focus on __Spark and PySpark__
 - Week 2 (8/21):
-  - Implement memory-based with PySpark
-  - Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
+  - [x] Parse JSON to Dataframe and save to disk for later usage.
+  - [ ] Take a small subset of data and do the same. Start with Memory-based model (Item-item, and user-item)
+  - [ ] Implement function to compute the metrics
+  - [ ] Apply what you've learned to do some basic EDA of data.
+  - [ ] Setup Spark to local Machine / server.
+  - [ ] Read solutions of RecSys of winners.   https://github.com/VasiliyRubtsov/recsys2018/blob/master/json_to_dataframe.ipynb
+  - [ ] Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
 - Week 3 (8/28):
-  - Implement model-based with Deep Learning
-  - Compare model with various Metrics
+  - [ ] Implement memory-based with PySpark
+  - [ ] Implement model-based with Deep Learning
+  - [ ] Compare model with various Metrics
 - Week 4:
-  - Tune model and finalize the results.
-  - Finish the report.
+  - [ ] Tune model and finalize the results.
+  - [ ] Finish the report.
 
 ## Reference:
 
