@@ -13,7 +13,7 @@ import json
 import pandas as pd
 import time
 from tqdm import tqdm
-
+import gc
 def create_df_data(path):
     
     playlist_col = ['collaborative', 'duration_ms', 'modified_at', 
@@ -54,7 +54,7 @@ def create_df_data(path):
         total_time += duration
 #        print("Time elapsed: ",duration)
     print("Total time elapsed: ",total_time)
-    
+    gc.collect()
     print("Reading the challenge dataset")
     f = open(path+'/challenge/challenge_set.json')
     js = f.read()
@@ -80,12 +80,13 @@ def create_df_data(path):
 
     track_uri2tid = df_tracks.set_index('track_uri').tid
 
-    df_playlists = pd.DataFrame(playlists, columns=['pid', 'tid', 'pos'])
+#    df_playlists = pd.DataFrame.from_records(playlists, columns=['pid', 'tid', 'pos'])
+    df_playlists = pd.DataFrame.from_records(playlists, columns=['pid', 'tid', 'pos'])
     df_playlists.tid = df_playlists.tid.map(track_uri2tid)
 
-    df_playlists_test_info = pd.DataFrame(data_playlists_test, columns=playlist_test_col)
+    df_playlists_test_info = pd.DataFrame.from_records(data_playlists_test, columns=playlist_test_col)
 
-    df_playlists_test = pd.DataFrame(playlists_test, columns=['pid', 'tid', 'pos'])
+    df_playlists_test = pd.DataFrame.from_records(playlists_test, columns=['pid', 'tid', 'pos'])
     df_playlists_test.tid = df_playlists_test.tid.map(track_uri2tid)
 
     df_tracks.to_hdf(path+'/df_data/df_tracks.hdf', key='abc')
