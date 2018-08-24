@@ -2,3 +2,4 @@ data/mpd
 data/challenge
 sample
 .spyproject
+*.hdf
