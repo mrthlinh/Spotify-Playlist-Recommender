@@ -18,9 +18,7 @@ import gc #garbage collector
 import matplotlib.pyplot as plt
 import dask.dataframe as dd
 
-#import matplotlib 
 
-#gc.enable()
 
 # df_playlists: number of tracks in playlists
 # df_playlists_info: number of playlists
@@ -34,13 +32,6 @@ df_playlists = pd.read_hdf('data/df_data/df_playlists_info.hdf')
 #df_tracks_test = pd.read_hdf('data/df_data/df_playlists_test.hdf')
 #df_playlists_test = pd.read_hdf('data/df_data/df_playlists_test_info.hdf')
 
-#df1 = dd.from_pandas(df_tracks,npartitions=2)
-#df2 = dd.from_pandas(df_unique_tracks,npartitions=2)
-
-#from dask.diagnostics import ProgressBar
-#
-#with ProgressBar():
-#    df_top_dask = df1.merge(df2,on='tid',how='outer')
 
 # Number of ...
 print("Number of Playlist: ",df_playlists.shape[0])
@@ -68,11 +59,6 @@ print("Median of number of tracks in each playlist: ",df_playlists['num_tracks']
 # Artist Name
 df_top = df_tracks.merge(df_unique_tracks,on='tid',how='outer')
 
-# Top of
-# Track Name
-# Artist Name
-df_top = df_tracks.merge(df_unique_tracks,on='tid',how='outer')
-
 #df_top = df1.merge(df2,on='tid',how='outer')
 
 top_20_track = df_top.groupby(['track_uri']).agg({'track_uri':'count', 'artist_name':'first','track_name':'first'})
@@ -80,7 +66,25 @@ top_20_track['full_title'] = top_20_track.apply(lambda x: x[2] + " by " + x[1],a
 top_20_track = top_20_track.sort_values(by=['track_uri'],ascending = False)
 top_20_track = top_20_track.head(20)
 
+top_20_track = top_20_track.iloc[:,[0,3]]
+top_20_track.columns = ['Top 20','Appearance']
+top_20_track = top_20_track.set_index('Tittle')
+top_20_track.iloc[::-1].plot(kind = 'barh', title='Top 20 Songs in Spotify Playlist')
+
+
 top_20_artist= df_top.groupby(['artist_uri']).agg({'artist_uri':'count', 'artist_name':'first'})
 top_20_artist = top_20_artist.sort_values(by=['artist_uri'],ascending = False)
 top_20_artist = top_20_artist.head(20)
+
+top_20_artist.columns = ['Number of songs','Artist Name']
+top_20_artist = top_20_artist.set_index('Artist Name')
+top_20_artist.iloc[::-1].plot(kind = 'barh', title='Top 20 Artists in Spotify Playlist')
+
+
+
+
+
+
+
+
 
