@@ -1,4 +1,11 @@
 # Spotify Playlist Recommender
+## Table of Contents
+1. [The task](#The-task)
+2. [The dataset](#The-dataset)
+3. [Metrics](#Metrics)
+4. [Proposed Solutions](#Proposed-Solutions)
+5. [EDA](#EDA)
+6. [Timeline](#timeline)
 
 ## The task
 The goal of the challenge is to develop a system for the task of automatic playlist continuation. Given a set of playlist features, participants’ systems shall generate a list of recommended tracks that can be added to that playlist, thereby ‘continuing’ the playlist. We define the task formally as follows:
@@ -241,21 +248,41 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 
 
 ### EDA:
-- Number of:
-  - playlists
-  - Tracks
-  - unique tracks, albums, artists, titles, normalized titles
-- Distribution and Average of:
-  - #song per playlist
-  - #
 
-- Average songs per playlist? Distribution of #songs?
-- Average duration songs?
-- Top Songs
+- Number of:
+  - playlists: 1000000
+  - Tracks: 66346428
+  - Unique tracks: 2262292
+  - Unique albums: 734684
+  - Unique Titles: 92944
+
+- Distribution of: Playlist length, Number of Albums / Playlist, Number of Artist / Playlist, Number of edits / Playlist, Number of Followers / Playlist, Number of Tracks / Playlist
+
+  ![](pic/description/distribution.png)
+
+  As we can see all distributions are left-skewed which means if we are looking for average value, we should go for "Median" not "Mean"
+
+  - Median of playlist length:  11422438.0
+  - Median of number of albums in each playlist:  37.0
+  - Median of number of artists in each playlist:  29.0
+  - Median of number of edits in each playlist:  29.0
+  - Median of number of followers in each playlist:  1.0
+  - Median of number of tracks in each playlist:  49.0
+
+- Top 20 Songs in Sporify playlists
+
+  ![](pic/description/top20-song.png)
+
+- Top 20 Artist in Spotify Playlists
+
+  ![](pic/description/top20-artist.png)
+
 
 ### Preliminary Result
-1. Description for small dataset.
+1. Description for small Dataset.
+
 2. Result of item-item / user-item based
+
 3. Conclusion
 
 ## Timeline:
@@ -269,9 +296,9 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
   - [x] Parse JSON to Dataframe and save to disk for later usage.
   - [ ] Take a small subset of data and do the same. Start with Memory-based model (Item-item, and user-item)
   - [ ] Implement function to compute the metrics
-  - [ ] Apply what you've learned to do some basic EDA of data.
-  - [ ] Setup Spark to local Machine / server.
-  - [ ] Read solutions of RecSys of winners.   https://github.com/VasiliyRubtsov/recsys2018/blob/master/json_to_dataframe.ipynb
+  - [x] Apply what you've learned to do some basic EDA of data.
+  - [x] Setup Spark to local Machine / server.
+  - [x] Read solutions of RecSys of winners.   https://github.com/VasiliyRubtsov/recsys2018/blob/master/json_to_dataframe.ipynb
   - [ ] Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
 - Week 3 (8/28):
   - [ ] Implement memory-based with PySpark
@@ -292,3 +319,11 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 7. [Implementing CF in Python with Last.fm dataset](http://www.salemmarafi.com/code/collaborative-filtering-with-python/)
 8. [Theory and implementation of CF -must read](https://towardsdatascience.com/various-implementations-of-collaborative-filtering-100385c6dfe0)
 9. [must read](http://blog.ethanrosenthal.com/2015/11/02/intro-to-collaborative-filtering/)
+
+## Software Installation:
+1. [Install Spark](https://medium.com/@GalarnykMichael/install-spark-on-ubuntu-pyspark-231c45677de0)
+Or you just need to execute this
+```
+  conda install pyspark
+```
+2.https://sigdelta.com/blog/how-to-install-pyspark-locally/
