@@ -1,10 +1,10 @@
 # Spotify Playlist Recommender
 ## Table of Contents
-1. [The task](#The-task)
-2. [The dataset](#The-dataset)
-3. [Metrics](#Metrics)
-4. [Proposed Solutions](#Proposed-Solutions)
-5. [EDA](#EDA)
+1. [The task](#the-task)
+2. [The dataset](#the-dataset)
+3. [Metrics](#metrics)
+4. [Proposed Solutions](#proposed-solutions)
+5. [EDA](#eda)
 6. [Timeline](#timeline)
 
 ## The task
@@ -319,7 +319,7 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 7. [Implementing CF in Python with Last.fm dataset](http://www.salemmarafi.com/code/collaborative-filtering-with-python/)
 8. [Theory and implementation of CF -must read](https://towardsdatascience.com/various-implementations-of-collaborative-filtering-100385c6dfe0)
 9. [must read](http://blog.ethanrosenthal.com/2015/11/02/intro-to-collaborative-filtering/)
-
+10. [Spark API](https://spark.apache.org/docs/latest/rdd-programming-guide.html)
 ## Software Installation:
 1. [Install Spark](https://medium.com/@GalarnykMichael/install-spark-on-ubuntu-pyspark-231c45677de0)
 Or you just need to execute this
