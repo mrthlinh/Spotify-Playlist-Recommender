@@ -132,6 +132,53 @@ Here's an example of a typical playlist entry:
 
         }
 
+
+## Challenge Set
+I build my own challenge Set based on criteria of official one but with some modification
+
+__Test Set Format__
+
+The challenge set consists of a single JSON dictionary with three fields:
+
+- __date__ - the date the challenge set was generated. This should be "2018-01-16 08:47:28.198015"
+- __version__ - the version of the challenge set. This should be "v1"
+- __playlists__ - an array of 10,000 incomplete playlists. Each element in this array contains the following fields:
+  - __pid__ - the playlist ID
+  - __name__ - (optional) - the name of the playlist. For some challenge playlists, the name will be missing.
+  - __num_holdouts__ - the number of tracks that have been omitted from the playlist
+  - __tracks__ - a (possibly empty) array of tracks that are in the playlist. Each element of this array contains the following fields:
+    - __pos__ - the position of the track in the playlist (zero offset)
+    - __track_name__ - the name of the track
+    - __track_uri__ - the Spotify URI of the track
+    - __artist_name__ - the name of the primary artist of the track
+    - __artist_uri__ - the Spotify URI of the primary artist of the track
+    - __album_name__ - the name of the album that the track is on
+    - __album_uri__ -- the Spotify URI of the album that the track is on
+    - __duration_ms__ - the duration of the track in milliseconds
+    - __num_samples__ the number of tracks included in the playlist
+    - __num_tracks__ - the total number of tracks in the playlist.
+
+__How to build Test Set__
+
+- All tracks in the challenge set appear in the MPD
+- All holdout tracks appear in the MPD
+
+The test set contains 10 difference challenges, each challenge contains 1000 playlists sampled from MPD:
+1. Predict tracks for a playlist given its title and the first 5 tracks
+2. Predict tracks for a playlist given its title and the first 10 tracks
+3. Predict tracks for a playlist given its title and the first 25 tracks
+4. Predict tracks for a playlist given its title and 25 random tracks
+5. Predict tracks for a playlist given its title and the first 50 tracks
+6. Predict tracks for a playlist given its title and 50 random tracks
+7. Predict tracks for a playlist given its title and the first 100 tracks
+8. Predict tracks for a playlist given its title and 100 random tracks
+9. Predict tracks for a playlist given its title and the first 200 tracks
+10. Predict tracks for a playlist given its title and 200 random tracks
+
+In order to build the Test Set
+1. A frequency table of Tracks
+2. Pick N playlists that contain
+
 ## Metrics
 Submissions will be evaluated using the following metrics. All metrics will be evaluated at both the track level (exact track must match) and the artist level (any track by that artist is a match). In the following, we denote the ground truth set of tracks by __G__, and the ordered list of recommended tracks by __R__. The size of a set or list is denoted by __| ⋅ |__, and we use from:to-subscripts to index a list. In the case of ties on individual metrics, earlier submissions are ranked higher.
 
@@ -294,16 +341,19 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
   - [x] Complete Section 16: __Data Science at Scale__, focus on __Spark and PySpark__
 - Week 2 (8/21):
   - [x] Parse JSON to Dataframe and save to disk for later usage.
-  - [ ] Take a small subset of data and do the same. Start with Memory-based model (Item-item, and user-item)
-  - [ ] Implement function to compute the metrics
+  - [x] Take a small subset of data and do the same. Start with Memory-based model (Item-item, and user-item) -> Not enough Memory even for small data
   - [x] Apply what you've learned to do some basic EDA of data.
   - [x] Setup Spark to local Machine / server.
   - [x] Read solutions of RecSys of winners.   https://github.com/VasiliyRubtsov/recsys2018/blob/master/json_to_dataframe.ipynb
-  - [ ] Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
+
 - Week 3 (8/28):
+  - [ ] Build a test set
   - [ ] Implement memory-based with PySpark
   - [ ] Implement model-based with Deep Learning
   - [ ] Compare model with various Metrics
+  - [ ] Implement function to compute the metrics
+  - [ ] Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
+
 - Week 4:
   - [ ] Tune model and finalize the results.
   - [ ] Finish the report.
@@ -319,7 +369,9 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 7. [Implementing CF in Python with Last.fm dataset](http://www.salemmarafi.com/code/collaborative-filtering-with-python/)
 8. [Theory and implementation of CF -must read](https://towardsdatascience.com/various-implementations-of-collaborative-filtering-100385c6dfe0)
 9. [must read](http://blog.ethanrosenthal.com/2015/11/02/intro-to-collaborative-filtering/)
-10. [Spark API](https://spark.apache.org/docs/latest/rdd-programming-guide.html)
+10. [Spark API collaborative filtering](https://spark.apache.org/docs/latest/mllib-collaborative-filtering.html)
+11. [Large-Scale Parallel Collaborative Filtering for the Netflix Prize](https://link.springer.com/chapter/10.1007%2F978-3-540-68880-8_32)
+
 ## Software Installation:
 1. [Install Spark](https://medium.com/@GalarnykMichael/install-spark-on-ubuntu-pyspark-231c45677de0)
 Or you just need to execute this
