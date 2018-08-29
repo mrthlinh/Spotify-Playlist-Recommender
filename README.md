@@ -163,7 +163,8 @@ __How to build Test Set__
 - All tracks in the challenge set appear in the MPD
 - All holdout tracks appear in the MPD
 
-The test set contains 10 difference challenges, each challenge contains 1000 playlists sampled from MPD:
+The test set contains 8 difference challenges, each challenge contains 1000 playlists sampled from MPD:
+
 1. Predict tracks for a playlist given its title and the first 5 tracks
 2. Predict tracks for a playlist given its title and the first 10 tracks
 3. Predict tracks for a playlist given its title and the first 25 tracks
@@ -172,8 +173,7 @@ The test set contains 10 difference challenges, each challenge contains 1000 pla
 6. Predict tracks for a playlist given its title and 50 random tracks
 7. Predict tracks for a playlist given its title and the first 100 tracks
 8. Predict tracks for a playlist given its title and 100 random tracks
-9. Predict tracks for a playlist given its title and the first 200 tracks
-10. Predict tracks for a playlist given its title and 200 random tracks
+
 
 In order to build the Test Set
 1. A frequency table of Tracks
@@ -348,6 +348,10 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 
 - Week 3 (8/28):
   - [ ] Build a test set
+  - [ ] Configure to connect Spyder to Server
+  - [ ] Build a giant table of user-item
+  - [ ] Implement user-based CF
+  - [ ] Implement item-based CF
   - [ ] Implement memory-based with PySpark
   - [ ] Implement model-based with Deep Learning
   - [ ] Compare model with various Metrics
