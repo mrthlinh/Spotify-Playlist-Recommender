@@ -7,17 +7,17 @@ Created on Tue Aug 28 08:34:00 2018
 """
 
 import pandas as pd
-import gc #garbage collector
-import matplotlib.pyplot as plt
-import dask.dataframe as dd
-from pandas import pivot_table
+#import gc #garbage collector
+#import matplotlib.pyplot as plt
+#import dask.dataframe as dd
+#from pandas import pivot_table
 
-from sklearn import cross_validation as cv
-from sklearn.metrics.pairwise import pairwise_distances, cosine_distances,cosine_similarity
-from sklearn.metrics import mean_squared_error
-from math import sqrt
-import time
-import numpy as np
+#from sklearn import cross_validation as cv
+#from sklearn.metrics.pairwise import pairwise_distances, cosine_distances,cosine_similarity
+#from sklearn.metrics import mean_squared_error
+#from math import sqrt
+#import time
+#import numpy as np
 
 #df_playlists_test = pd.read_hdf('data/df_playlists_test.hdf')
 #df_playlists_test_info = pd.read_hdf('data/df_playlists_test_info.hdf')
@@ -51,7 +51,7 @@ df_track_distr = df_temp.groupby(['tid'])['count'].sum().sort_values(ascending=F
 del df_temp
 
 #criteria_list = [200,100,50,25,10,5]
-criteria_list = [200,100]
+criteria_list = [200,200,100,100,50,50,25,25,10,5]
 pid_list = []
 for criteria in criteria_list:
     #criteria = 200
@@ -60,7 +60,7 @@ for criteria in criteria_list:
     df_filter = df_temp[df_temp.num_tracks > criteria]
     
     # Create an empty list to contain the pid
-    list_size = 10
+    list_size = 1000
     list_1000 = []
     while (True):
         # randomly pick 1 pid in df_filter
@@ -89,7 +89,8 @@ for i in range(len(pid_list)):
 
 df_playlists_challenge.to_hdf('data/df_playlists_challenge.hdf', key='abc')
 
-print("finish")
+
+#print("finish")
 # Write a small test
 #assert(df_playlists_challenge.pid[:10].isin(pid_list[0]).all())
     
