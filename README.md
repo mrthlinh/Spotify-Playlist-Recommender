@@ -173,11 +173,10 @@ The test set contains 8 difference challenges, each challenge contains 1000 play
 6. Predict tracks for a playlist given its title and 50 random tracks
 7. Predict tracks for a playlist given its title and the first 100 tracks
 8. Predict tracks for a playlist given its title and 100 random tracks
+9. Predict tracks for a playlist given its title and the first 200 tracks
+10. Predict tracks for a playlist given its title and 200 random tracks
 
 
-In order to build the Test Set
-1. A frequency table of Tracks
-2. Pick N playlists that contain
 
 ## Metrics
 Submissions will be evaluated using the following metrics. All metrics will be evaluated at both the track level (exact track must match) and the artist level (any track by that artist is a match). In the following, we denote the ground truth set of tracks by __G__, and the ordered list of recommended tracks by __R__. The size of a set or list is denoted by __| ⋅ |__, and we use from:to-subscripts to index a list. In the case of ties on individual metrics, earlier submissions are ranked higher.
@@ -347,18 +346,18 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
   - [x] Read solutions of RecSys of winners.   https://github.com/VasiliyRubtsov/recsys2018/blob/master/json_to_dataframe.ipynb
 
 - Week 3 (8/28):
-  - [ ] Build a test set
-  - [ ] Configure to connect Spyder to Server
+  - [x] Build a test set
+  - [x] Configure to connect Spyder to Server
   - [ ] Build a giant table of user-item
   - [ ] Implement user-based CF
   - [ ] Implement item-based CF
+  - [ ] Implement function to compute the metrics
+
+- Week 4:
+  - [ ] Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
   - [ ] Implement memory-based with PySpark
   - [ ] Implement model-based with Deep Learning
   - [ ] Compare model with various Metrics
-  - [ ] Implement function to compute the metrics
-  - [ ] Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
-
-- Week 4:
   - [ ] Tune model and finalize the results.
   - [ ] Finish the report.
 
