@@ -89,11 +89,11 @@ def create_df_data(path):
     df_playlists_test = pd.DataFrame.from_records(playlists_test, columns=['pid', 'tid', 'pos'])
     df_playlists_test.tid = df_playlists_test.tid.map(track_uri2tid)
 
-    df_tracks.to_hdf(path+'/df_data/df_tracks.hdf', key='abc')
-    df_playlists.to_hdf(path+'/df_data/df_playlists.hdf', key='abc')
+    df_tracks.to_hdf(path+'/df_data/df_tracks_info.hdf', key='abc')
+    df_playlists.to_hdf(path+'/df_data/df_tracks.hdf', key='abc')
     df_playlists_info.to_hdf(path+'/df_data/df_playlists_info.hdf', key='abc')
-    df_playlists_test.to_hdf(path+'/df_data/df_playlists_test.hdf', key='abc')
-    df_playlists_test_info.to_hdf(path+'/df_data/df_playlists_test_info.hdf', key='abc')
+    df_playlists_test.to_hdf(path+'/df_data/challenge_set/df_tracks_test.hdf', key='abc')
+    df_playlists_test_info.to_hdf(path+'/df_data/challenge_set/df_playlists_test_info.hdf', key='abc')
     
 if __name__ == "__main__":
     print(__doc__)
