@@ -1,0 +1,1 @@
+scp /home/bking/SpringBoardCapstone/CapStone/Spotify-Playlist-Recommender/*.py txt171930@ares.utdallas.edu:~/SpotifyRecSys/

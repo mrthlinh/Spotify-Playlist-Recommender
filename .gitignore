@@ -3,3 +3,4 @@ data/challenge
 sample
 .spyproject
 *.hdf
+__pycache__

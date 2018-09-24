@@ -10,6 +10,7 @@
 ## The task
 The goal of the challenge is to develop a system for the task of automatic playlist continuation. Given a set of playlist features, participants’ systems shall generate a list of recommended tracks that can be added to that playlist, thereby ‘continuing’ the playlist. We define the task formally as follows:
 
+
 __Input__
 
 A user-created playlist, represented by:
@@ -160,10 +161,14 @@ The challenge set consists of a single JSON dictionary with three fields:
 
 __How to build Test Set__
 
+Dataset contains PID from 0 to 999,999 (1 mil playlists), with M unique Tracks
+
+In order to replicate competition's test set, we remove some playlists from original playlists such that
+
 - All tracks in the challenge set appear in the MPD
 - All holdout tracks appear in the MPD
 
-The test set contains 8 difference challenges, each challenge contains 1000 playlists sampled from MPD:
+The test set contains 10 difference challenges, each challenge contains 1000 playlists sampled from MPD:
 
 1. Predict tracks for a playlist given its title and the first 5 tracks
 2. Predict tracks for a playlist given its title and the first 10 tracks
@@ -176,6 +181,10 @@ The test set contains 8 difference challenges, each challenge contains 1000 play
 9. Predict tracks for a playlist given its title and the first 200 tracks
 10. Predict tracks for a playlist given its title and 200 random tracks
 
+
+__How to build train Set__
+
+Train set will be the original set subtracts tracks in test sets
 
 
 ## Metrics
@@ -229,7 +238,7 @@ __Collaborative filtering (CF)__: In contrast of content-based filtering, collab
 In __Memory-based filtering__, we also have two types, one is User-Item CF and other is Item-Item CF.
 - User-Item CF: take a particular person, find people who are similar to that person based on similar ratings, and recommend items those similar people liked. “Customers who are similar to you also liked …”
 - Item-Item CF: Item-item filtering will take a particular item, find people who liked that item, and find other items that those people (or people similar to them) also liked (in common?). It takes items and outputs other items as recommendations. “Customers who liked this item also liked …”
-In short User-Item CF is “Customers who are similar to you also liked …” and Item-Item CF is “Customers who liked this item also liked …”
+- In short User-Item CF is “Customers who are similar to you also liked …” and Item-Item CF is “Customers who liked this item also liked …”
 ![](pic/description/memory-based.jpg)
 
 Memory-based algorithms are easy to implement and produce reasonable prediction quality. The drawback of memory-based CF is that it doesn't scale to real-world scenarios and doesn't address the well-known cold-start problem, that is when new user or new item enters the system. Model-based CF methods are scalable and can deal with higher sparsity level than memory-based models, but also suffer when new users or items that don't have any ratings enter the system.
@@ -252,20 +261,70 @@ In __memory-based__, we following the procedure
 
 "1" means that song is included in the playlist and "0" otherwise. For example, playlist 1 contains song 2 and song 3, song 2 also includes in playlist 2.
 
-2. First we split the data into training and testing set such that the testing set would contains 10 training set contains .....
+2. First we split the data into training and testing set. Refer to #ChallengeSet for how to build test set.
 
-3. Calculate the similarity between song-song or playlist-playlist
+3. Calculate the similarity between song-song or playlist-playlist. In playlist-playlist similarity, we take each row as a vector while in song-song similarity we take column as a vector.
+
+![](pic/description/similarity-matrix.png)
+
+__similarity metrics:__
+- Cosine
+
 ![](pic/description/cosine-sim.PNG)
 
-In playlist-playlist similarity, we take each row as a vector while in song-song similarity we take column as a vector
-![](pic/description/similarity-matrix.PNG)
+- Euclidean
+
+__Formula here__
+
+- Pearson Correlation
+
+__Formula here__
+
 4. Based on the similarity matrix and, we make the prediction on the testing set.
+
+__Note that__ Because user-based CF cannot deal with users (playlist) who never appear in the history, we will only use item-based CF (songs) =>> __WRONG__ we will __incorporate test set to train set__ -> build sim matrix and follow next steps
+
 
 For playlist-playlist, we predict that a playlist __p__ contains song __s__ is given by the weighted sum of all other playlists' containing for song __s__ where the weighting is the cosine similarity between the each playlist and the input playlist __p__. Then normalizing the result.
 
 <img src="https://latex.codecogs.com/gif.latex?\hat{r}_{ps}&space;=&space;\frac{\sum\limits_{p'}&space;sim(p,&space;p')&space;r_{p's}}{\sum\limits_{p'}|sim(p,&space;p')|}" title="\hat{r}_{ps} = \frac{\sum\limits_{p'} sim(p, p') r_{p's}}{\sum\limits_{p'}|sim(p, p')|}" />
 
+---
+
+<img src="https://latex.codecogs.com/gif.latex?\hat{r}_{ps}&space;=&space;\frac{\sum\limits_{s'}&space;sim(s,&space;s')&space;r_{ps'}}{\sum\limits_{s'}|sim(s,&space;s')|}" title="\hat{r}_{ps} = \frac{\sum\limits_{p'} sim(p, p') r_{p's}}{\sum\limits_{p'}|sim(p, p')|}" />
+
 With song-song, we simply replace similarity matrix of playlists by that of songs.
+
+
+Given N songs in a playlist, how to predict next K songs
+- Playlist-based (like user-based)
+
+```
+- Build similarity matrix between playlists (cosine, euclidean, Pearson correlation)
+- For each playlist Px:
+    n = 1
+    While total_track is not 500:
+      Find n-th most relevant playlist of Px, called Pr
+      Add K (or all) songs in Pr to Px
+      Increment n by 1
+
+```
+
+- Song-based (like item-based) -> this is weird (why you don't just use KNN at the very first place)
+
+(Our space is the space of similarity)
+```
+- Build similarity matrix between songs (cosine, euclidean, Pearson Correlation)
+- For each playlist Px:
+    Compute "cluster center" by averaging all similarities
+    Get K = 500 nearest neighbor and add to existing songs
+```
+
+What the winner did, they divide the problem into 2 stages
+
+- Stage 1: Build a CF to retrieve list of candidates
+- Stage 2: Build some ML model to re-rank order of candidates
+
 
 5. Evaluate based on 4 metrics
 
@@ -325,11 +384,21 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 
 
 ### Preliminary Result
-1. Description for small Dataset.
 
-2. Result of item-item / user-item based
+1. Description for small Dataset.
+  - df_train: Columns = [pid,tid,pos], size = 1mil playlists with 10000 incomplete playlists
+  - df_test: Columns = [pid,tid,pos], size = 10000 complete playlists
+2. File
+  - buildChallengeSet: replicate the challenge set
+  - buildPLaylistSongMatrix: export playlist-song matrix in format [pid, list(tid), list(pos)]
+  - helper: helping function
+  - evalution:
+  - baseline
+
+3. Result of item-item / user-item based
 
 3. Conclusion
+
 
 ## Timeline:
 
@@ -348,10 +417,11 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 - Week 3 (8/28):
   - [x] Build a test set
   - [x] Configure to connect Spyder to Server
-  - [ ] Build a giant table of user-item
+  - [x] Implement function to compute the metrics
+  - [x] Build a giant table of user-item
   - [ ] Implement user-based CF
   - [ ] Implement item-based CF
-  - [ ] Implement function to compute the metrics
+
 
 - Week 4:
   - [ ] Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
@@ -374,7 +444,8 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 9. [must read](http://blog.ethanrosenthal.com/2015/11/02/intro-to-collaborative-filtering/)
 10. [Spark API collaborative filtering](https://spark.apache.org/docs/latest/mllib-collaborative-filtering.html)
 11. [Large-Scale Parallel Collaborative Filtering for the Netflix Prize](https://link.springer.com/chapter/10.1007%2F978-3-540-68880-8_32)
-
+12. [Advantage of item-based CF over user-based CF](https://en.wikipedia.org/wiki/Item-item_collaborative_filtering)
+13. [Good Paper about their work](https://drive.google.com/file/d/1wmNnkb9rOetCNGp4m5WbT_I0Fh7tANld/view)
 ## Software Installation:
 1. [Install Spark](https://medium.com/@GalarnykMichael/install-spark-on-ubuntu-pyspark-231c45677de0)
 Or you just need to execute this
