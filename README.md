@@ -389,6 +389,7 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
   - df_train: Columns = [pid,tid,pos], size = 1mil playlists with 10000 incomplete playlists
   - df_test: Columns = [pid,tid,pos], size = 10000 complete playlists
 2. File
+
   - buildChallengeSet: replicate the challenge set
   - buildPLaylistSongMatrix: export playlist-song matrix in format [pid, list(tid), list(pos)]
   - helper: helping function
@@ -397,36 +398,54 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 
 3. Result of item-item / user-item based
 
+|Method|Parameter|Result|
+|:----:|:--------:|:----:|
+|Playlist-based||{'r-precision': 0.5965153456055117, 'ndcg': 0.7798772703852686, 'song clicks': 0.0}|
+|Song-based|||
+|Word2Vec + Song-based|100-200-300 dimension|{'r-precision': 0.0030150149552267557, 'ndcg': 0.004065222638120043, 'song clicks': 10.357300000000002}|
+|FP Growth|||
+
+
+|Method|Parameter|RMS|
+|:----:|:--------:|:----:|
+|Playlist-based CF|||
+|Song-based CF|||
+|Matrix Factorization|||
+
 3. Conclusion
 
 
 ## Timeline:
 
-- Week 0 (8/7):
+- Week 0
   - [x] Project Proposal
-- Week 1 (8/14):
+- Week 1
   - [x] Work on some tutorials of CF from Movie Data.
   - [x] Complete Section 16: __Data Science at Scale__, focus on __Spark and PySpark__
-- Week 2 (8/21):
+- Week 2
   - [x] Parse JSON to Dataframe and save to disk for later usage.
   - [x] Take a small subset of data and do the same. Start with Memory-based model (Item-item, and user-item) -> Not enough Memory even for small data
   - [x] Apply what you've learned to do some basic EDA of data.
   - [x] Setup Spark to local Machine / server.
   - [x] Read solutions of RecSys of winners.   https://github.com/VasiliyRubtsov/recsys2018/blob/master/json_to_dataframe.ipynb
 
-- Week 3 (8/28):
+- Week 3
   - [x] Build a test set
   - [x] Configure to connect Spyder to Server
   - [x] Implement function to compute the metrics
-  - [x] Build a giant table of user-item
+  - [x] Build a giant table of user-item -> DONT DO THIS
+
+- Week
+  - [x] Word2vec model for song-based model in Spark
+  - [ ] Word2vec model for playlist-based model in Spark
+  - [ ] ALS with Vectos.sparse in Spark
   - [ ] Implement user-based CF
   - [ ] Implement item-based CF
 
+- Week:
 
-- Week 4:
-  - [ ] Get used to fast.ai which could be a framework you use. If not, stick with Keras, TensorFlow or PyTorch
-  - [ ] Implement memory-based with PySpark
-  - [ ] Implement model-based with Deep Learning
+
+- Week
   - [ ] Compare model with various Metrics
   - [ ] Tune model and finalize the results.
   - [ ] Finish the report.
@@ -446,6 +465,9 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 11. [Large-Scale Parallel Collaborative Filtering for the Netflix Prize](https://link.springer.com/chapter/10.1007%2F978-3-540-68880-8_32)
 12. [Advantage of item-based CF over user-based CF](https://en.wikipedia.org/wiki/Item-item_collaborative_filtering)
 13. [Good Paper about their work](https://drive.google.com/file/d/1wmNnkb9rOetCNGp4m5WbT_I0Fh7tANld/view)
+14. [FPGrowth in Spark -> You may use it after CF](https://spark.apache.org/docs/2.3.0/api/python/pyspark.ml.html#pyspark.ml.fpm.FPGrowth)
+15. [Matrix Factorization at scale in Spark](https://www.slideshare.net/MrChrisJohnson/collaborative-filtering-with-spark)
+16. [ALS without Spark](https://medium.com/radon-dev/als-implicit-collaborative-filtering-5ed653ba39fe)
 ## Software Installation:
 1. [Install Spark](https://medium.com/@GalarnykMichael/install-spark-on-ubuntu-pyspark-231c45677de0)
 Or you just need to execute this
@@ -453,3 +475,4 @@ Or you just need to execute this
   conda install pyspark
 ```
 2.https://sigdelta.com/blog/how-to-install-pyspark-locally/
+3. [Set up Spark for Jupyter Notebook](https://datawookie.netlify.com/blog/2017/07/accessing-pyspark-from-a-jupyter-notebook/)

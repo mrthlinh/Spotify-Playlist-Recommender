@@ -11,6 +11,8 @@ from email.mime.text import MIMEText
 import numpy as np
 from multiprocessing import Pool
 import pandas as pd
+
+
 def sendGmail(to,body,subject):
     gmail_user = 'mrthlinh@gmail.com'  
     gmail_password = 'Inevergiveup1992'
@@ -186,8 +188,48 @@ def findKRelevant_simple(pid,df,K):
     topK = [x for _,x in sorted(zip(sim,p2),reverse=True)]
     return topK[:K]
 
+# Function forSpark
+def centroid(model,data,sc,vector_size):
+    if len(data) == 0:
+        print("All data points are not in vocab")
+        print(vector_size)
+        from pyspark.mllib.linalg import Vectors
+        return Vectors.dense(Vectors.zeros(vector_size))
+        
+    vectorize_list = list(map(model.transform, data))
+    centroid = sc.parallelize(vectorize_list).reduce(lambda x,y: x+y)
+    centroid = centroid / len(vectorize_list)
+    return centroid
 
-   
+# Function forSpark
+def findK_relevant(model,K,data_list,sc,vector_size):
+    # Find the centroid of data_list
+    vec  = centroid(model,data_list,sc,vector_size)
+    # Define empty list
+    topK = []
+    
+    # Define multiplity constant
+    constant = 0
+    
+    # Loop until get all K element
+    while(1):
+#         print(constant)
+        # Get nearest vectors
+        syms = model.findSynonyms(vec, int(K*(1.1 + constant / 10)))
+        # Find top K
+        topK = [s[0] for s in syms][1:]        
+        # Filter out duplication
+        topK = [value for value in topK if value not in data_list]
+        
+        if (len(topK) >= K):
+            break
+        
+        if (round(constant) == 10):
+            break
+        
+        constant += 2
+        
+    return topK[:K]   
 
 
 
