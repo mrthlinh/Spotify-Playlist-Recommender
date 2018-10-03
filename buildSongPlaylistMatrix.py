@@ -38,7 +38,7 @@ def main(argv):
     df_sp_test_truth = pd.concat([pid,pos],axis=1)
     
     
-    print("save matrix ong-playlist")
+    print("save matrix song-playlist")
     df_sp_train.to_hdf("data/df_data/df_songPlaylist/df_sp_train.hdf",key='abc')
     df_sp_test.to_hdf("data/df_data/df_songPlaylist/df_sp_test.hdf",key='abc')
     df_sp_test_truth.to_hdf("data/df_data/df_songPlaylist/df_sp_test_truth.hdf",key='abc')
