@@ -103,6 +103,7 @@ if __name__ == "__main__":
     if ("df_data" not in list_dir):
         print("Create df_data folder")
         os.makedirs(path+"/df_data")
+        os.makedirs(path+"/df_data/challenge_set")
 
     # call main function      
     create_df_data(path)
