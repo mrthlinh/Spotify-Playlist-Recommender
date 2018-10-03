@@ -4,3 +4,7 @@ sample
 .spyproject
 *.hdf
 __pycache__
+.ipynb_checkpoints
+tmp_dev
+*.pickle
+*.out
