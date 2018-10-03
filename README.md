@@ -398,22 +398,34 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 
 3. Result of item-item / user-item based
 
-|Method|Parameter|Result|
-|:----:|:--------:|:----:|
-|Playlist-based||{'r-precision': 0.5965153456055117, 'ndcg': 0.7798772703852686, 'song clicks': 0.0}|
-|Song-based|||
-|Word2Vec + Song-based|100-200-300 dimension|{'r-precision': 0.0030150149552267557, 'ndcg': 0.004065222638120043, 'song clicks': 10.357300000000002}|
-|FP Growth|||
+|Method| Parameter|R-precision|NDCG|Song Click|
+|:----:|:--------:|:---------:|:---:|:-------:|
+|Playlist-based||0.5965 |0.7798|0.0|
+|Song-based|||||
+|Word2Vec + Song-based|100-200-300 dimension|0.0030|0.004|10.35|
+|Word2Vec + Playlist-based|min_fre = 3, dimension 50| 0.0171|0.015 |8.086|
+|Word2Vec + Playlist-based|min_fre = 3, dimension 100| 0.0190|0.0172 |7.805|
+|FP Growth|||||
 
 
-|Method|Parameter|RMS|
-|:----:|:--------:|:----:|
-|Playlist-based CF|||
-|Song-based CF|||
-|Matrix Factorization|||
+|Method| Parameter|  RMS |R-precision|
+|:----:|:--------:|:----:|:---------:|
+|Playlist-based CF||||
+|Song-based CF||||
+|Matrix Factorization||||
+
 
 3. Conclusion
 
+## Progress:
+
+- Finish Word2Vec models in Spark -> work in word2vec space.
+
+Vectors.sparse()
+
+- Try data structure Vector Sparse -> efficient way to deal with sparse vectors
+- If Vector Sparse works -> open up opportunities for other Matrix Factorization algorithms
+-
 
 ## Timeline:
 
@@ -433,14 +445,15 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
   - [x] Build a test set
   - [x] Configure to connect Spyder to Server
   - [x] Implement function to compute the metrics
-  - [x] Build a giant table of user-item -> DONT DO THIS
+  - [x] Build a giant table of user-item -> DONT DO THIS -> ACTUALLY I DID IT
 
 - Week
   - [x] Word2vec model for song-based model in Spark
-  - [ ] Word2vec model for playlist-based model in Spark
+  - [x] Word2vec model for playlist-based model in Spark
+  - [ ] Implement user-based CF -> Need to test
+  - [ ] Implement item-based CF -> Need to test
+  - [ ] NMF with Sk-learn with scipy.sparse vector
   - [ ] ALS with Vectos.sparse in Spark
-  - [ ] Implement user-based CF
-  - [ ] Implement item-based CF
 
 - Week:
 
