@@ -60,7 +60,7 @@ def computeCentroid(vector_list):
 
 def cosine_sim_song(vector):
     """
-        Description: 
+        Description: Compute the cosine similarity between 1 centroid and 1 vector
         Usage:
          
     """
@@ -83,6 +83,31 @@ def cosine_sim_song(vector):
     cosine_sime = A / B
     
     return cosine_sime.round(2)
+
+#def cosine_sim(vector1,vector2):
+#    """
+#        Description: Compute the cosine similarity between 2 vectors
+#        Usage:
+#         
+#    """
+#
+#   
+#    set_vector1 = set(vector1)
+#    set_vector2 = set(vector2)
+#    
+#    intersect = set_vector1.intersection(set_vector2)
+#    value = [centroid.get(i) for i in intersect]
+#    A = sum(value)
+#    
+#    length_vector1 = np.sqrt(sum(np.square(list(centroid.values()))))
+#    
+#    length_vector2 = np.sqrt(len(compare_vector))
+#    
+#    B = length_vector1 * length_vector2
+#    
+#    cosine_sime = A / B
+#    
+#    return cosine_sime.round(2)
 
 def findKRelevant_song(curr_song_list,df,K):
     """
@@ -116,14 +141,19 @@ def findKRelevant_song(curr_song_list,df,K):
 
 
 
-def cosine_sim(vector):
-    set_vector1 = set(vector[0])
-    set_vector2 = set(vector[1])
+def cosine_sim(vector1,vector2):
+    """
+        Description: Compute the cosine similarity between 2 vectors
+        Usage:
+         
+    """
+    set_vector1 = set(vector1)
+    set_vector2 = set(vector2)
     
     intersect = len(set_vector1.intersection(set_vector2))
     
-    length_vector1 = np.sqrt(len(vector[0]))
-    length_vector2 = np.sqrt(len(vector[1]))
+    length_vector1 = np.sqrt(len(set_vector1))
+    length_vector2 = np.sqrt(len(set_vector2))
     
     cosine_sim = intersect / (length_vector1 * length_vector2)
     return cosine_sim.round(2)
@@ -231,6 +261,16 @@ def findK_relevant(model,K,data_list,sc,vector_size):
         
     return topK[:K]   
 
+# Function forSpark
+#    (pid,df,K):
+def findK_song_spark(pid,K,model,sc):
+    # from trained model, find K most relevant playlist
+    
+    # Define empty list
+    topK = []
+    
+        
+    return topK[:K]   
 
 
 class my_evaluation:
