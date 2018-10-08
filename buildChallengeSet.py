@@ -23,13 +23,18 @@ def main():
     # Pandas table sorted by 
     df_temp = df_tracks.copy()
     df_temp['count'] = 1
+    
+    # Ensure any track must appear in training
     df_track_distr = df_temp.groupby(['tid'])['count'].sum().sort_values(ascending=False)
     del df_temp
     
     #list_size = 5
     #criteria_list = [200,100]
     
-    list_size = 1000
+#    list_size = 1000
+#    criteria_list = [200,200,100,100,50,50,25,25,10,5]
+
+    list_size = 100
     criteria_list = [200,200,100,100,50,50,25,25,10,5]
     
     pid_list = []
@@ -202,26 +207,28 @@ def main():
     df_tracks_challenge_incomplete.to_hdf('data/df_data/my_challenge_set/df_tracks_challenge_incomplete.hdf', key='abc')
     
     
-    # Train-Test Split and validation
-        
-    # List of pid list in track incomplete
-    pid_list = df_tracks_challenge_incomplete.pid.unique()
-    
-    # Filter data that have pid in in pid_list
-    df_filter = df_tracks[~df_tracks.pid.isin(pid_list)]
-    
-    # train file = df_filter + df_tracks_incomplete
-    df_train = pd.concat([df_filter,df_tracks_challenge_incomplete])
-    
-    # test file truth
-    df_test = df_tracks_challenge_incomplete.copy()
-    
-    # test file truth
-    df_test_truth = df_tracks_challenge.copy()
-    
-    df_train.to_hdf('data/df_data/df_train.hdf', key='abc')
-    df_test.to_hdf('data/df_data/df_test.hdf', key='abc')
-    df_test_truth.to_hdf('data/df_data/df_test_truth.hdf', key='abc')
+#    # Train-Test Split and validation
+#        
+#    # List of pid list in track incomplete
+#    pid_list = df_tracks_challenge_incomplete.pid.unique()
+#    
+#    # Filter data that have pid in in pid_list
+#    df_filter = df_tracks[~df_tracks.pid.isin(pid_list)]
+#    
+#    # train file = df_filter + df_tracks_incomplete
+#    df_train = pd.concat([df_filter,df_tracks_challenge_incomplete])
+#    
+#    # test file truth
+#    df_test = df_tracks_challenge_incomplete.copy()
+#    
+#    # test file truth
+#    df_test_truth = df_tracks_challenge.copy()
+#    
+#    # Complete file
+#    
+#    df_train.to_hdf('data/df_data/df_train_new.hdf', key='abc')
+#    df_test.to_hdf('data/df_data/df_test_new.hdf', key='abc')
+#    df_test_truth.to_hdf('data/df_data/df_test_truth_new.hdf', key='abc')
     
 if __name__ =="__main__":
     
