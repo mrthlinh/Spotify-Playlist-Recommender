@@ -1,0 +1,10 @@
+#!/bin/bash
+python hello.py
+python Json2DF
+python buildChallengeSet
+python buildTrainSet
+python buildSongPlaylistMatrix
+python buildPlaylistSongMatrix
+python create_small_dataset
+python buildGiantMatrix
+python buildGiantMatrix_truth
