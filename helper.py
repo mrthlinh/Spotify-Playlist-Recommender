@@ -141,12 +141,18 @@ def findKRelevant_song(curr_song_list,df,K):
 
 
 
-def cosine_sim(vector1,vector2):
+
+
+#def cosine_sim(vector1,vector2):
+def cosine_sim(vector):
     """
-        Description: Compute the cosine similarity between 2 vectors
+        Description: Compute the cosine similarity between 2 vectors with multiprocessing
         Usage:
          
     """
+    vector1 = vector[0]
+    vector2 = vector[1]
+#    print("length: {}".format(len(vector1)))
     set_vector1 = set(vector1)
     set_vector2 = set(vector2)
     
@@ -261,16 +267,7 @@ def findK_relevant(model,K,data_list,sc,vector_size):
         
     return topK[:K]   
 
-# Function forSpark
-#    (pid,df,K):
-def findK_song_spark(pid,K,model,sc):
-    # from trained model, find K most relevant playlist
-    
-    # Define empty list
-    topK = []
-    
-        
-    return topK[:K]   
+
 
 
 class my_evaluation:
@@ -309,13 +306,13 @@ class my_evaluation:
             truth = df_truth.loc[pid].tid
             
             # Get n_track
-            n_track = len(truth)
+#            n_track = len(truth)
             
 #            truth = truth.tid
 #            predictions = predictions.tid        
-            r_precision_list.append(self.r_precision(predictions,truth,n_track))
-            ndcg_list.append(self.ndcg(predictions,truth,n_track))
-            song_clicks_list.append(self.song_clicks(predictions,truth,n_track))
+            r_precision_list.append(self.r_precision(predictions,truth,500))
+            ndcg_list.append(self.ndcg(predictions,truth,500))
+            song_clicks_list.append(self.song_clicks(predictions,truth,500))
         
         r_precision_value = np.array([r_precision_list]).mean()
         ndcg_value = np.array([ndcg_list]).mean()
@@ -349,6 +346,9 @@ class my_evaluation:
         truth = list(truth)
     
         # Computes an ordered vector of 1.0 and 0.0
+        
+        # Sum ( rel / log2 (i+1) )
+        
         score = [float(element in truth) for element in predictions]    
         dcg  = np.sum(score / np.log2(1 + np.arange(1, len(score) + 1)))
         
