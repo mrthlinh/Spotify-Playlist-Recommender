@@ -1,143 +1,110 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Sat Aug 25 11:21:52 2018
+Created on Sat Oct  6 20:44:11 2018
 
 @author: bking
 """
-from multiprocessing import Pool
-import time
 
+import sklearn.preprocessing as pp
+import scipy.sparse as sp
+from scipy.sparse import dok_matrix,csc_matrix,csr_matrix,vstack
+import pickle
 import pandas as pd
+from multiprocessing import Pool,Value
+import time
 import argparse
-import sys
-#from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances,pairwise_distances
-#from sklearn.metrics.pairwise import cosine_similarity, euclidean_distances,pairwise_distances
-from helper import alertError,alertFinishJob
-import gc
-import numpy as np
-from tqdm import tqdm
+from sklearn.metrics.pairwise import cosine_similarity,paired_cosine_distances
 
 
+def cosine_similarities_playlist(pid_list_test,ps_matrix):
+    ps_matrix_norm = pp.normalize(ps_matrix, axis=1)
+    ps_matrix_test = ps_matrix_norm[pid_list_test,:]
+    return ps_matrix_test * ps_matrix_norm.T
 
-def cosine_sim_matrix(df):
-    pid_list = list(df.index.values)
-    length = len(pid_list)
-    record = []
+def cosine_similarities_song(index_tid_list_test,ps_matrix):
+    ps_matrix_norm = pp.normalize(ps_matrix, axis=0)
+    # tid_list_test must be index
+    ps_matrix_test = ps_matrix_norm[:,index_tid_list_test]
+    return ps_matrix_test.T * ps_matrix_norm
+
+def main():
+
+    args = parser.parse_args()
+    mode = args.mode
     
-    for i in tqdm(range(length)):
-        p1 = pid_list[i]
-        
-        for j in range(i+1,length):
+    print(
+          '''
+          ========================== Build Similarity Matrix between playlists ==============================
+          1. Loading Rating Matrix [P x S]
+          2. [p x P] = [p x S] * [S x P]
+          ===================================================================================================
+          '''
+          )
             
-            p2 = pid_list[j]
-#            pair = [p1,p2]
-            
-            vector1 = df.tid.iloc[i]
-            vector2 = df.tid.iloc[j]
-            sim = cosine_sim(vector1,vector2)
-        
-            record.append([p1,p2,sim])        
-    df_sim = pd.DataFrame.from_records(record,columns=['pair_1','pair_2','similarity']) 
-    return df_sim
-#    return 0
+    print("Load Rating Matrix")
     
-def cosine_sim(vector1,vector2):
-    set_vector1 = set(vector1)
-    set_vector2 = set(vector2)
-    
-    intersect = len(set_vector1.intersection(set_vector2))
-    
-    length_vector1 = np.sqrt(len(vector1))
-    length_vector2 = np.sqrt(len(vector2))
-    
-    cosine_sim = intersect / (length_vector1 * length_vector2)
-    return cosine_sim.round(3)
+    pickle_path = 'data/giantMatrix_new.pickle'
+    if mode == 1:
+        pickle_path = 'data/giantMatrix_small.pickle'
 
-#def corr_sim(vector1,vector2):
+    with open(pickle_path,'rb') as f:
+        ps_matrix = pickle.load(f)      
+        # Change to column sparse matrix because it is much faster to get column 12s -> 0.08s
     
-def main(argv):
-    args = parser.parse_args(argv[1:])
-    sim_metric = args.sim_metric
+    ps_matrix_col = ps_matrix.tocsc() 
+    ps_matrix_row = ps_matrix.tocsr()
     
-    print("Load data")
+    print("Loading data")
+    
+    path = "data/df_data/"
 
-    df_ps_train = pd.read_hdf('data/df_data/df_playlistSong/df_ps_train.hdf')
-#    df_ps_test = pd.read_hdf('data/df_data/df_playlistSong/df_ps_test.hdf')
-#    df_ps_test_truth = pd.read_hdf('data/df_data/df_playlistSong/df_ps_test_truth.hdf')
+    if mode == 1:
+        path = "data/df_data/df_small/"
     
-#    print("Reading Data")
-#    df_train = pd.read_hdf('data/df_data/df_train.hdf')
-#    df_test = pd.read_hdf('data/df_data/df_test.hdf')
-#    df_train['appearance'] = 1
-#    df_ps_train = pivot_table(df_train, index = 'pid', columns = 'tid',values='appearance',fill_value=0)
-   
-    # Build playlist-song matrix
-#    print("Build playlist-song matrix for train set")
-#    tid = df_train.groupby(by='pid')['tid'].apply(list)
-#    pos = df_train.groupby(by='pid')['pos'].apply(list)
-#    df_ps_train = pd.concat([tid,pos],axis=1)
-      
+    df_ps_test_truth = pd.read_hdf(path+"df_playlistSong/df_ps_test_truth_new.hdf")
+    df_sp_train = pd.read_hdf(path+"df_playlistSong/df_sp_train_new.hdf")
+    df_sp_test = pd.read_hdf(path+"df_playlistSong/df_sp_test_new.hdf")
     
-#    df_test['appearance'] = 1
-#    df_ps_test = pivot_table(df_test, index = 'pid', columns = 'tid',values='appearance',fill_value=0)
-#    print("Build playlist-song matrix for test set")
-#    tid = df_test.groupby(by='pid')['tid'].apply(list)
-#    pos = df_test.groupby(by='pid')['pos'].apply(list)
-#    df_ps_test = pd.concat([tid,pos],axis=1)
+    pid_list_test = list(df_ps_test_truth.index) 
     
-    
-    if sim_metric == 'cosine':
-        print("Cosine Similarity Matrix")
-        playlist_similarity = cosine_sim_matrix(df_ps_train)
-#        songs_similarity = cosine_sim_matrix(df_ps_test)
-#        playlist_similarity = cosine_similarity(df_ps_train)
- 
-#        songs_similarity = cosine_similarity(df_ps_train.T)
-    
-#    if sim_metric == 'correlation':
-#        playlist_similarity = df_ps_train.T.corr()
-#        songs_similarity = df_ps_train.corr()
-    
-#    if sim_metric == 'euclidean':
-#        playlist_similarity = 1-pairwise_distances(df_ps)
-#        songs_similarity = 1-pairwise_distances(df_ps.T)
-        
-#    print("save matrix Playlist-Songs")
-#    df_ps_train.to_hdf("data/df_data/df_ps_train.hdf",key='abc')
-#    df_ps_test.to_hdf("data/df_data/df_ps_test.hdf",key='abc')
-#    
-#    del df_ps_train
-#    del df_ps_test
-#    gc.collect()
-    
-    print("save similarity matrix")
-    playlist_similarity.to_hdf("data/df_data/playlists_sim_"+sim_metric+".hdf",key='abc')
-#    songs_similarity.to_hdf("data/df_data/songs_sim_"+sim_metric+".hdf",key='abc') 
-    
-    del playlist_similarity
-    gc.collect()
-    
-    
-#    Test
-        
-#    df_train = pd.read_hdf('data/df_data/df_tracks.hdf')
-#    tracks_small = df_train[df_train.pid.isin(range(100))]
-#    tracks_small['appearance'] = 1            
-#    df_ps = pivot_table(tracks_small, index = 'pid', columns = 'tid',values='appearance',fill_value=0)
-#    
-#    playlist_similarity = 1-pairwise_distances(df_ps)
-#    songs_similarity = 1-pairwise_distances(df_ps.T)
-        
-#    
+    print("Build cosine similarity playlists")
+    ps_sim_playlist = cosine_similarities_playlist(pid_list_test,ps_matrix_row)
 
+    print("Save similarity matrix playlist")
+    
+    out_filename = "cosineSimMatrix_playlist.pickle"
+    
+    with open("data/"+out_filename, 'wb') as f:
+        pickle.dump(ps_sim_playlist, f,protocol=4)  
+        
+    # Get tid list
+    tid_list = list(df_sp_train.index)
+    num_tid = len(tid_list)
+    dict_index = {k:v for k,v in zip(tid_list,range(0,num_tid))}
+    tid_list_test = list(df_sp_test.index)
+    index_tid_list_test = [dict_index.get(i) for i in tid_list_test]
+    
+    print("Build cosine similarity songs")
+    ps_sim_song = cosine_similarities_song(index_tid_list_test,ps_matrix_col)    
+    
+    print("Save similarity matrix song")
 
+    out_filename = "cosineSimMatrix_song.pickle"
+    
+    with open("data/"+out_filename, 'wb') as f:
+        pickle.dump(ps_sim_song, f,protocol = 4)      
+    
 if __name__ =="__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--sim_metric', default='cosine', type=str, help='Similarity Metrics')
-    main(sys.argv)
-#    try:
-#        main(sys.argv)
-#        alertFinishJob("Done")
-#    except Exception as e:
-#        alertError(str(e))
+    parser.add_argument('--mode', default= 0, type=int, help='Mode Test On/Off') 
+    #parser.add_argument('--proc', default='16', type=str, help='Number of proccessor') 
+    
+    start = time.time()
+    main()
+    print("Total time taken = {0:.5f}".format(time.time() - start))    
+    
+    
+    
+    
+    
