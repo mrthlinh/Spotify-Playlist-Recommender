@@ -12,7 +12,8 @@ import os
 #from functools import reduce
 #from itertools import chain
 from collections import defaultdict
-
+#from scipy.sparse import dok_matrix
+#import pickle
 
 
 pid_size = 100
@@ -31,7 +32,11 @@ tid_test_truth = tid_complete[-test_size:]
 
 
 df_ps_train = pd.DataFrame({'pid':pid,'tid':tid_train})
+
+
 df_ps_test = pd.DataFrame({'pid':pid[-test_size:],'tid':tid_test})
+
+
 df_ps_test_truth = pd.DataFrame({'pid':pid[-test_size:],'tid':tid_test_truth})
 
 def transform(row):
@@ -82,7 +87,7 @@ for d in tid_dict:
 df_sp_test_truth = pd.DataFrame({'tid':list(sp.keys()),'pid':list(sp.values())})
 df_sp_test_truth = df_sp_test_truth.set_index('tid').sort_index()
 
-#######################################
+
 
 path = "data/df_data/df_small/df_playlistSong/"
 if (os.path.exists(path) == False):
@@ -91,6 +96,10 @@ if (os.path.exists(path) == False):
 df_sp_train.to_hdf(path+"df_sp_train.hdf",key="abc")
 df_sp_test.to_hdf(path+"df_sp_test.hdf",key="abc")
 df_sp_test_truth.to_hdf(path+"df_sp_test_truth.hdf",key="abc")
+
+df_ps_train = df_ps_train.set_index('pid').sort_index()
+df_ps_test = df_ps_test.set_index('pid').sort_index()
+df_ps_test_truth = df_ps_test_truth.set_index('pid').sort_index()
 
 df_ps_train.to_hdf(path+"df_ps_train.hdf",key="abc")
 df_ps_test.to_hdf(path+"df_ps_test.hdf",key="abc")
