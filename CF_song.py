@@ -84,7 +84,7 @@ def main(argv):
     
     # Create rating matrix -> Load Rating Matrix from dump file
     print("Create rating matrix")
-#    with open('data/giantMatrix','rb') as f:
+#    with open('data/giantMatrix.pickle','rb') as f:
 #        ps_matrix = pickle.load(f)    
 #        
     # Delete this part when Giant Matrix is ready
@@ -98,6 +98,14 @@ def main(argv):
         index_tid = [tid_list.index(t) for t in tid ]
         
         ps_matrix[index_pid,index_tid]=1
+
+       
+        
+    with open('data/giantMatrix_small.pickle', 'wb') as f:
+        pickle.dump(ps_matrix, f)    
+
+
+        
        
     rms = 0
 #    record = []
