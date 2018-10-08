@@ -6,7 +6,7 @@
 4. [Proposed Solutions](#proposed-solutions)
 5. [EDA](#eda)
 6. [Timeline](#timeline)
-
+7. [Progress](#progress)
 ## The task
 The goal of the challenge is to develop a system for the task of automatic playlist continuation. Given a set of playlist features, participants’ systems shall generate a list of recommended tracks that can be added to that playlist, thereby ‘continuing’ the playlist. We define the task formally as follows:
 
@@ -400,17 +400,18 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 
 |Method| Parameter|R-precision|NDCG|Song Click|
 |:----:|:--------:|:---------:|:---:|:-------:|
-|Playlist-based||0.5965 |0.7798|0.0|
+|Playlist-based|| 0.6011 |0.7876|0.0|
 |Song-based|||||
 |Word2Vec + Song-based|100-200-300 dimension|0.0030|0.004|10.35|
 |Word2Vec + Playlist-based|min_fre = 3, dimension 50| 0.0171|0.015 |8.086|
 |Word2Vec + Playlist-based|min_fre = 3, dimension 100| 0.0190|0.0172 |7.805|
+|Playlist-based CF (get top K rating songs)||0.621|0.696|0.0|
 |FP Growth|||||
 
 
 |Method| Parameter|  RMS |R-precision|
 |:----:|:--------:|:----:|:---------:|
-|Playlist-based CF||||
+|Playlist-based CF (get top K rating songs)||0.00716|0.621|
 |Song-based CF||||
 |Matrix Factorization||||
 
@@ -425,7 +426,13 @@ Vectors.sparse()
 
 - Try data structure Vector Sparse -> efficient way to deal with sparse vectors
 - If Vector Sparse works -> open up opportunities for other Matrix Factorization algorithms
--
+
+Oct 4th,
+
+- GiantMatrix needs to be re-build because of the wrong usage of multiprocessing
+- When GiantMatrix is ready, probably you can run CF-playlists
+- Revise CF-playlist -> CF-songs
+- Experiment with NMF with giantmatrix
 
 ## Timeline:
 
@@ -487,5 +494,7 @@ Or you just need to execute this
 ```
   conda install pyspark
 ```
-2.https://sigdelta.com/blog/how-to-install-pyspark-locally/
+
+2. https://sigdelta.com/blog/how-to-install-pyspark-locally/
+
 3. [Set up Spark for Jupyter Notebook](https://datawookie.netlify.com/blog/2017/07/accessing-pyspark-from-a-jupyter-notebook/)
