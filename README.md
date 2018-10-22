@@ -7,6 +7,7 @@
 5. [EDA](#eda)
 6. [Timeline](#timeline)
 7. [Progress](#progress)
+
 ## The task
 The goal of the challenge is to develop a system for the task of automatic playlist continuation. Given a set of playlist features, participants’ systems shall generate a list of recommended tracks that can be added to that playlist, thereby ‘continuing’ the playlist. We define the task formally as follows:
 
@@ -20,8 +21,6 @@ A user-created playlist, represented by:
 __Output__
 
 - A list of 500 recommended candidate tracks, ordered by relevance in decreasing order.
-
-Note that the system should also be able to cope with playlists for which no initial seed tracks are given. To assess the performance of a submission, the output track predictions are compared to the ground truth tracks (“reference set”) from the original playlist.
 
 ## The dataset
 The Million Playlist Dataset (MPD) contains 1,000,000 playlists created by users on the Spotify platform. It can be used by researchers interested in exploring how to improve the music listening experience.
@@ -251,17 +250,25 @@ The goal of Matrix factorization is to learn the latent preferences of users and
 
 ### Playlist Recommender:
 
-For our problem, we treat "user" as "playlist" and "item" as "song". Because the dataset don't provide much information about each song so we won't use content-based filtering. Therefore we would only focus on Collaborative Filtering.
+For our problem, we treat "user" as "playlist" and "item" as "song". Because the dataset don't provide much information about each song so we won't use content-based filtering. Therefore we would only focus on
+- KNN
+- Collaborative Filtering
+- Frequent Pattern Growth
+- Word2Vec.
 
-### Memory Based
-In __memory-based__, we following the procedure
+### Collaborative Filtering
+
+- Playlist based CF: From similarity between each playlist and how other playlists "rate" (include or not) a track, I can infer the current "rate".
+- Song based CF: From similarity between each songs and how current playlist "rate" other songs, I can infer the current "rate".
+
+In __Collaborative Filtering__, we following the procedure
 1. Construct playlist-song matrix
 
-![](pic/description/user-item table.png)
+![](pic/description/user-item-table.png)
 
 "1" means that song is included in the playlist and "0" otherwise. For example, playlist 1 contains song 2 and song 3, song 2 also includes in playlist 2.
 
-2. First we split the data into training and testing set. Refer to #ChallengeSet for how to build test set.
+2. First we split the data into training and testing set. Refer to [Challenge Set](#challengeset) for how to build test set.
 
 3. Calculate the similarity between song-song or playlist-playlist. In playlist-playlist similarity, we take each row as a vector while in song-song similarity we take column as a vector.
 
@@ -282,21 +289,17 @@ __Formula here__
 
 4. Based on the similarity matrix and, we make the prediction on the testing set.
 
-__Note that__ Because user-based CF cannot deal with users (playlist) who never appear in the history, we will only use item-based CF (songs) =>> __WRONG__ we will __incorporate test set to train set__ -> build sim matrix and follow next steps
-
-
 For playlist-playlist, we predict that a playlist __p__ contains song __s__ is given by the weighted sum of all other playlists' containing for song __s__ where the weighting is the cosine similarity between the each playlist and the input playlist __p__. Then normalizing the result.
 
 <img src="https://latex.codecogs.com/gif.latex?\hat{r}_{ps}&space;=&space;\frac{\sum\limits_{p'}&space;sim(p,&space;p')&space;r_{p's}}{\sum\limits_{p'}|sim(p,&space;p')|}" title="\hat{r}_{ps} = \frac{\sum\limits_{p'} sim(p, p') r_{p's}}{\sum\limits_{p'}|sim(p, p')|}" />
 
----
-
-<img src="https://latex.codecogs.com/gif.latex?\hat{r}_{ps}&space;=&space;\frac{\sum\limits_{s'}&space;sim(s,&space;s')&space;r_{ps'}}{\sum\limits_{s'}|sim(s,&space;s')|}" title="\hat{r}_{ps} = \frac{\sum\limits_{p'} sim(p, p') r_{p's}}{\sum\limits_{p'}|sim(p, p')|}" />
 
 With song-song, we simply replace similarity matrix of playlists by that of songs.
 
+<img src="https://latex.codecogs.com/gif.latex?\hat{r}_{ps}&space;=&space;\frac{\sum\limits_{s'}&space;sim(s,&space;s')&space;r_{ps'}}{\sum\limits_{s'}|sim(s,&space;s')|}" title="\hat{r}_{ps} = \frac{\sum\limits_{p'} sim(p, p') r_{p's}}{\sum\limits_{p'}|sim(p, p')|}" />
 
-Given N songs in a playlist, how to predict next K songs
+### K Nearest Neighbor
+
 - Playlist-based (like user-based)
 
 ```
@@ -310,7 +313,7 @@ Given N songs in a playlist, how to predict next K songs
 
 ```
 
-- Song-based (like item-based) -> this is weird (why you don't just use KNN at the very first place)
+- Song-based (like item-based)
 
 (Our space is the space of similarity)
 ```
@@ -319,11 +322,6 @@ Given N songs in a playlist, how to predict next K songs
     Compute "cluster center" by averaging all similarities
     Get K = 500 nearest neighbor and add to existing songs
 ```
-
-What the winner did, they divide the problem into 2 stages
-
-- Stage 1: Build a CF to retrieve list of candidates
-- Stage 2: Build some ML model to re-rank order of candidates
 
 
 5. Evaluate based on 4 metrics
@@ -398,15 +396,16 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 
 3. Result of item-item / user-item based
 
-|Method| Parameter|R-precision|NDCG|Song Click|
-|:----:|:--------:|:---------:|:---:|:-------:|
-|Playlist-based|| 0.6011 |0.7876|0.0|
-|Song-based|||||
+|Method| Parameter|R-precision|NDCG|Song Click|Time Taken (s)|
+|:----:|:--------:|:---------:|:---:|:-------:|:--------:|
+|Playlist-based baseline|| 0.7766 |1.6010|0.0|41.42|
+|Song-based baseline||0.7847|0.7975|0.0|4183|
 |Word2Vec + Song-based|100-200-300 dimension|0.0030|0.004|10.35|
 |Word2Vec + Playlist-based|min_fre = 3, dimension 50| 0.0171|0.015 |8.086|
 |Word2Vec + Playlist-based|min_fre = 3, dimension 100| 0.0190|0.0172 |7.805|
-|Playlist-based CF (get top K rating songs)||0.621|0.696|0.0|
+|Playlist-based CF (get top K rating songs)||0.7844|0.8011|0.0| approx 12000
 |FP Growth|||||
+
 
 
 |Method| Parameter|  RMS |R-precision|
@@ -420,19 +419,7 @@ Once we have latent feature vectors of playlist and songs, we can feed them to a
 
 ## Progress:
 
-- Finish Word2Vec models in Spark -> work in word2vec space.
-
-Vectors.sparse()
-
-- Try data structure Vector Sparse -> efficient way to deal with sparse vectors
-- If Vector Sparse works -> open up opportunities for other Matrix Factorization algorithms
-
-Oct 4th,
-
-- GiantMatrix needs to be re-build because of the wrong usage of multiprocessing
-- When GiantMatrix is ready, probably you can run CF-playlists
-- Revise CF-playlist -> CF-songs
-- Experiment with NMF with giantmatrix
+- Use Python library Surprise to do Matrix Factorization
 
 ## Timeline:
 
@@ -457,9 +444,9 @@ Oct 4th,
 - Week
   - [x] Word2vec model for song-based model in Spark
   - [x] Word2vec model for playlist-based model in Spark
-  - [ ] Implement user-based CF -> Need to test
-  - [ ] Implement item-based CF -> Need to test
-  - [ ] NMF with Sk-learn with scipy.sparse vector
+  - [x] Implement playlist-based CF -> Need to test
+  - [x] Implement song-based CF -> Need to test
+  - [x] NMF with Sk-learn with scipy.sparse vector
   - [ ] ALS with Vectos.sparse in Spark
 
 - Week:
